@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,5 +72,22 @@ public class SolicitudesController {
         catch (Exception ex){
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("/verSolicitudes/fechas/{fecha1}/{fecha2}")
+    public ResponseEntity<List<Solicitud>> filterFechas(@PathVariable String fecha1, @PathVariable String fecha2){
+        try{
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                Date date1 = dateFormat.parse(fecha1);
+                Date date2 = dateFormat.parse(fecha2);
+                return ResponseEntity.ok(this.solicitudesService.filterFecha(date1, date2));
+            } catch (ParseException ex) {
+                return ResponseEntity.badRequest().build();
+            }
+        }catch (Exception ex){
+            return ResponseEntity.internalServerError().build();
+        }
+
     }
 }
